@@ -2,18 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DialogueAnimator : MonoBehaviour
+public class DAT : MonoBehaviour
 {
-    public Animator startAnim;
-    public DialogueManager dm;
+    public Animator startAnim_t;
+    public DialogueManager_tomato1 dm;
 
     public void OnTriggerEnter2D(Collider2D other)
     {
-        startAnim.SetBool("startOpen", true);
+        startAnim_t.SetBool("startOpen_t", true);
     }
     public void OnTriggerExit2D(Collider2D other)
     {
-        startAnim.SetBool("startOpen", false);
+        startAnim_t.SetBool("startOpen_t", false);
         dm.EndDialogue();
     }
 }

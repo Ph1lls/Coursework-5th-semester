@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DialogueManager : MonoBehaviour
+public class DialogueManager_tomato1 : MonoBehaviour
 {
     public Text dialogueText;
     public Text nameText;
 
-    public Animator boxAnim;
-    public Animator startAnim;
+    public Animator boxAnim_t;
+    public Animator startAnim_t;
 
     private Queue<string> sentences;
 
@@ -20,8 +20,8 @@ public class DialogueManager : MonoBehaviour
 
     public void StartDialogue(Dialogue dialogue)
     {
-        boxAnim.SetBool("boxOpen", true);
-        startAnim.SetBool("startOpen", false);
+        boxAnim_t.SetBool("boxOpen_t", true);
+        startAnim_t.SetBool("startOpen_t", false);
 
         nameText.text = dialogue.name;
         sentences.Clear();
@@ -37,7 +37,7 @@ public class DialogueManager : MonoBehaviour
     }
     public void DisplayNextSentence()
     {
-        if(sentences.Count == 0)
+        if (sentences.Count == 0)
         {
             EndDialogue();
             return;
@@ -47,10 +47,10 @@ public class DialogueManager : MonoBehaviour
         StartCoroutine(TS(sentence));
     }
 
-    IEnumerator TS (string sentence)
+    IEnumerator TS(string sentence)
     {
         dialogueText.text = "";
-        foreach (char letter  in sentence.ToCharArray())
+        foreach (char letter in sentence.ToCharArray())
         {
             dialogueText.text += letter;
             yield return null;
@@ -58,6 +58,6 @@ public class DialogueManager : MonoBehaviour
     }
     public void EndDialogue()
     {
-        boxAnim.SetBool("boxOpen", false);
+        boxAnim_t.SetBool("boxOpen_t", false);
     }
 }
