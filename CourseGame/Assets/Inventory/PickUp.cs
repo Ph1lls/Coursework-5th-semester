@@ -8,15 +8,16 @@ public class PickUp : MonoBehaviour
     public UnityEvent customEvent;
 
     [SerializeField] private GameObject slotButton;
+    private GameObject itemInSlot = null;
     private bool playerInRange = false;
 
-    [SerializeField] private Button handButton; 
+    [SerializeField] private Button handButton;
     [SerializeField] private DialogueManager dialogueManager;
     [SerializeField] private Interactor startAnim;
+
     private void Start()
     {
-        inventory = GameObject.FindGameObjectWithTag("Player").GetComponent<Inventory>();
-
+        inventory = Inventory.Instance; 
     }
 
     private void Update()
@@ -24,7 +25,6 @@ public class PickUp : MonoBehaviour
         if (playerInRange && Input.GetKeyDown(KeyCode.E))
         {
             AddItemToInventory();
-
         }
     }
 
@@ -46,7 +46,7 @@ public class PickUp : MonoBehaviour
         startAnim.Move(false);
     }
 
-    private void AddItemToInventory()
+    public void AddItemToInventory()
     {
         startAnim.Move(false);
         if (dialogueManager != null)
@@ -58,19 +58,19 @@ public class PickUp : MonoBehaviour
         {
             if (inventory.prefabs[i] == null)
             {
-                Instantiate(slotButton, inventory.slots[i].transform);
-                inventory.prefabs[i] = slotButton;
+                itemInSlot = Instantiate(slotButton, inventory.slots[i].transform);
+                inventory.prefabs[i] = itemInSlot;
                 handButton.interactable = false;
                 break;
             }
         }
 
-        
+       
+        customEvent.Invoke();
     }
 
     public void OnHandButtonClick()
     {
         AddItemToInventory();
-        customEvent.Invoke();
     }
 }

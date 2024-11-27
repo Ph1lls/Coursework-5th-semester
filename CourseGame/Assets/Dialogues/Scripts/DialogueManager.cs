@@ -5,17 +5,19 @@ using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
 {
-    [SerializeField] private Text dialogueText;
+    [SerializeField] private Text dialogueText; 
     [SerializeField] private Text nameText;
-    [SerializeField] private Image dialogueImage;
-    [SerializeField] private Dialogue dialogue;
+    [SerializeField] private Image dialogueImage; 
+    [SerializeField] private Dialogue dialogue; 
 
-    [SerializeField] private animateBox boxAnim;
+    [SerializeField] private animateBox boxAnim; 
     [SerializeField] private Interactor startAnim; 
 
-    private InteractObj player;
+    private InteractObj player; 
 
-    private Queue<string> sentences;
+    private Queue<string> sentences; 
+    private bool isDisplayingSentence = false; 
+    private bool isInDialogue = false;
 
     private void Start()
     {
@@ -25,35 +27,40 @@ public class DialogueManager : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        
         if (startAnim != null)
         {
             startAnim.Move(true);
+            player.nearestTrigger = this;
         }
-
-        player.nearestTrigger = this;
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        
         if (startAnim != null)
         {
             startAnim.Move(false);
         }
 
         player.nearestTrigger = null;
-        EndDialogue();
+
+
+        if (!isInDialogue)
+        {
+            EndDialogue();
+        }
     }
 
     public void StartDialogue()
     {
         if (dialogue == null || dialogue.sentences.Length == 0)
+        {
             return;
+        }
 
-        boxAnim.Move(true);
+        isInDialogue = true; 
 
-        
+        boxAnim.Move(true); 
+
         if (startAnim != null)
         {
             startAnim.Move(false);
@@ -71,33 +78,59 @@ public class DialogueManager : MonoBehaviour
             sentences.Enqueue(sentence);
         }
 
-        DisplayNextSentence();
+        DisplayNextSentence(); 
     }
 
     public void DisplayNextSentence()
     {
+        
+        if (isDisplayingSentence)
+            return;
+
+
         if (sentences.Count == 0)
         {
-            EndDialogue();
+            EndDialogue(); 
             return;
         }
-        string sentence = sentences.Dequeue();
+
+        string sentence = sentences.Dequeue(); 
+
         StopAllCoroutines();
-        StartCoroutine(TS(sentence));
+        StartCoroutine(TS(sentence)); 
     }
 
     private IEnumerator TS(string sentence)
     {
-        dialogueText.text = "";
+        isDisplayingSentence = true; 
+
+        dialogueText.text = ""; 
         foreach (char letter in sentence.ToCharArray())
         {
             dialogueText.text += letter;
-            yield return null;
+            yield return null; 
         }
+
+        isDisplayingSentence = false; 
     }
 
     private void EndDialogue()
     {
+        if (!isInDialogue) return; 
+
+        isInDialogue = false;
         boxAnim.Move(false);
+    }
+
+    private void Update()
+    {
+        
+        if (Input.GetMouseButtonDown(0)) 
+        {
+            if (isInDialogue && !isDisplayingSentence)
+            {
+                DisplayNextSentence();
+            }
+        }
     }
 }

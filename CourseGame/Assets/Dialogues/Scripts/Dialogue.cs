@@ -7,4 +7,5 @@ public class Dialogue
     public Sprite pic;
     [TextArea(3, 10)]
     public string[] sentences;
+
 }

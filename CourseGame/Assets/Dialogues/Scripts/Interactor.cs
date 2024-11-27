@@ -11,9 +11,21 @@ public class Interactor : MonoBehaviour
     private float targetPosition;
     private bool isMoving = false;
 
-    private void Start()
+    private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
+    }
+
+    private void OnEnable()
+    {
+
+        if (!isMoving)
+        {
+            startTime = Time.time;
+            Vector2 position = rectTransform.anchorMin;
+            startPosition = isHorizontal ? position.x : position.y;
+            targetPosition = 1; 
+        }
     }
 
     private void Update()
@@ -25,7 +37,7 @@ public class Interactor : MonoBehaviour
             float value = Mathf.Lerp(startPosition, targetPosition, fractionOfJourney);
             Vector2 stepPosition = Vector2.zero;
 
-            if(isHorizontal)
+            if (isHorizontal)
             {
                 stepPosition.x = value;
             }
@@ -42,7 +54,6 @@ public class Interactor : MonoBehaviour
             }
         }
     }
-
 
     public void Move(bool opening)
     {

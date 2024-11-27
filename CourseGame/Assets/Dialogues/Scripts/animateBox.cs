@@ -11,6 +11,7 @@ public class animateBox : MonoBehaviour
     private Vector3 startPosition;
     private Vector3 targetPosition;
     private bool isMoving = false;
+    public bool isActive = false;
 
     private void Start()
     {
@@ -64,6 +65,8 @@ public class animateBox : MonoBehaviour
 
     public void Move(bool up)
     {
+        isActive = up;
+
         if (!isMoving)
         {
             startTime = Time.time;

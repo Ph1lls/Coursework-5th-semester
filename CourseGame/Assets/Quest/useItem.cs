@@ -1,24 +1,39 @@
 using UnityEngine;
-
+using UnityEngine.Events;
+using UnityEngine.UI;  
 public class useItem : MonoBehaviour
 {
-    [SerializeField] private Inventory inventory;          
+    [SerializeField] private Inventory inventory;
     [SerializeField] private DialogueManager dialogueManagerRight;
     [SerializeField] private DialogueManager dialogueManagerFalse;
-    [SerializeField] private GameObject itemGoalPrefab;       
-    [SerializeField] private GameObject itemNeedPrefab;       
+    [SerializeField] private GameObject itemGoalPrefab;
+    [SerializeField] private GameObject itemNeedPrefab;
 
-    private bool playerInRange = false; 
+    private bool playerInRange = false;
     private int selectedSlot = -1;
+    public UnityEvent customEvent;
+
+    [SerializeField] private Button[] inventoryButtons;
+    [SerializeField] private Button useButton; 
 
     private void Start()
     {
-        inventory = GameObject.FindGameObjectWithTag("Player").GetComponent<Inventory>(); 
+        inventory = GameObject.FindGameObjectWithTag("Player").GetComponent<Inventory>();
+
+        for (int i = 0; i < inventoryButtons.Length; i++)
+        {
+            int index = i;
+            inventoryButtons[i].onClick.AddListener(() => SelectSlot(index));
+        }
+
+        if (useButton != null)
+        {
+            useButton.onClick.AddListener(HandleItemInteraction); 
+        }
     }
 
     private void Update()
     {
-       
         if (playerInRange && selectedSlot >= 0 && Input.GetKeyDown(KeyCode.E))
         {
             HandleItemInteraction();
@@ -38,8 +53,7 @@ public class useItem : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerInRange = false;
-            selectedSlot = -1; 
-
+            selectedSlot = -1;
         }
     }
 
@@ -53,37 +67,58 @@ public class useItem : MonoBehaviour
 
     private void HandleItemInteraction()
     {
-        if (selectedSlot < 0 || selectedSlot >= inventory.slots.Length) return;
-
-        GameObject selectedItem = inventory.prefabs[selectedSlot];
-
-        if (selectedItem != null && selectedItem == itemNeedPrefab)
-        {
-            ReplaceItemInSlot(selectedSlot, itemGoalPrefab);
-
-            if (dialogueManagerRight != null)
-            {
-                dialogueManagerRight.StartDialogue();
-            }
-        }
-
-        else 
+        if (selectedSlot < 0 || inventory.prefabs[selectedSlot] == null)
         {
             if (dialogueManagerFalse != null)
             {
                 dialogueManagerFalse.StartDialogue();
             }
+            return; 
+        }
+
+        if (selectedSlot >= 0 && selectedSlot < inventory.slots.Length)
+        {
+            GameObject selectedItem = inventory.prefabs[selectedSlot];
+            string gselectedItem = selectedItem.name.Replace("(Clone)", "");
+
+            if (selectedItem != null && gselectedItem == itemNeedPrefab.name)
+            {
+                DeactivateItemInSlot(selectedSlot);
+                ReplaceItemInSlot(selectedSlot, itemGoalPrefab);
+
+                if (dialogueManagerRight != null)
+                {
+                    dialogueManagerRight.StartDialogue();
+                }
+                customEvent.Invoke();
+            }
+            else
+            {
+                if (dialogueManagerFalse != null)
+                {
+                    dialogueManagerFalse.StartDialogue();
+                }
+            }
+        }
+    }
+
+    private void DeactivateItemInSlot(int slotIndex)
+    {
+        if (inventory.prefabs[slotIndex] != null)
+        {
+            inventory.prefabs[slotIndex].SetActive(false);
         }
     }
 
     private void ReplaceItemInSlot(int slotIndex, GameObject newItem)
     {
-        Destroy(inventory.prefabs[slotIndex]);
-
-        for (int i = slotIndex; i < inventory.slots.Length - 1; i++)
+        if (inventory.prefabs[slotIndex] != null)
         {
-            inventory.prefabs[i] = inventory.prefabs[i + 1];
+            inventory.prefabs[slotIndex].SetActive(false); 
         }
-        inventory.prefabs[inventory.slots.Length - 1] = Instantiate(newItem, inventory.slots[slotIndex].transform);
+
+        GameObject newObject = Instantiate(newItem, inventory.slots[slotIndex].transform);
+        inventory.prefabs[slotIndex] = newObject;
+        newObject.SetActive(true);
     }
 }
