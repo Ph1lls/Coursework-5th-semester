@@ -1,12 +1,13 @@
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.UI;  
-public class useItem : MonoBehaviour
+using UnityEngine.UI;
+
+public class UseItem : MonoBehaviour
 {
     [SerializeField] private Inventory inventory;
     [SerializeField] private DialogueManager dialogueManagerRight;
     [SerializeField] private DialogueManager dialogueManagerFalse;
-    [SerializeField] private GameObject itemGoalPrefab;
+    [SerializeField] private GameObject itemGoalPrefab; 
     [SerializeField] private GameObject itemNeedPrefab;
 
     private bool playerInRange = false;
@@ -14,7 +15,7 @@ public class useItem : MonoBehaviour
     public UnityEvent customEvent;
 
     [SerializeField] private Button[] inventoryButtons;
-    [SerializeField] private Button useButton; 
+    [SerializeField] private Button useButton;
 
     private void Start()
     {
@@ -28,7 +29,7 @@ public class useItem : MonoBehaviour
 
         if (useButton != null)
         {
-            useButton.onClick.AddListener(HandleItemInteraction); 
+            useButton.onClick.AddListener(HandleItemInteraction);
         }
     }
 
@@ -73,7 +74,7 @@ public class useItem : MonoBehaviour
             {
                 dialogueManagerFalse.StartDialogue();
             }
-            return; 
+            return;
         }
 
         if (selectedSlot >= 0 && selectedSlot < inventory.slots.Length)
@@ -84,13 +85,18 @@ public class useItem : MonoBehaviour
             if (selectedItem != null && gselectedItem == itemNeedPrefab.name)
             {
                 DeactivateItemInSlot(selectedSlot);
-                ReplaceItemInSlot(selectedSlot, itemGoalPrefab);
+
+                if (itemGoalPrefab != null)
+                {
+                    ReplaceItemInSlot(selectedSlot, itemGoalPrefab);
+                }
 
                 if (dialogueManagerRight != null)
                 {
                     dialogueManagerRight.StartDialogue();
                 }
-                customEvent.Invoke();
+
+                customEvent?.Invoke();
             }
             else
             {
@@ -104,9 +110,10 @@ public class useItem : MonoBehaviour
 
     private void DeactivateItemInSlot(int slotIndex)
     {
-        if (inventory.prefabs[slotIndex] != null)
+        if (inventory.prefabs[selectedSlot] != null)
         {
-            inventory.prefabs[slotIndex].SetActive(false);
+            Destroy(inventory.prefabs[selectedSlot]);
+            inventory.prefabs[selectedSlot] = null; 
         }
     }
 
@@ -114,7 +121,7 @@ public class useItem : MonoBehaviour
     {
         if (inventory.prefabs[slotIndex] != null)
         {
-            inventory.prefabs[slotIndex].SetActive(false); 
+            inventory.prefabs[slotIndex].SetActive(false);
         }
 
         GameObject newObject = Instantiate(newItem, inventory.slots[slotIndex].transform);
