@@ -1,14 +1,16 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI; 
+using UnityEngine.UI;
+using UnityEngine.Events;
+using Unity.VisualScripting;
 
 public class ConditionChecker : MonoBehaviour
 {
     [SerializeField] private Inventory inventory;
     [SerializeField] private DialogueManager dialogueManager;
     [SerializeField] private GameObject[] requiredItems; 
-    [SerializeField] private int sceneToLoad;
-    [SerializeField] private Button checkConditionsButton; 
+    [SerializeField] private Button checkConditionsButton;
+    [SerializeField] public UnityEvent customEvent;
 
     private void Start()
     {
@@ -60,16 +62,15 @@ public class ConditionChecker : MonoBehaviour
         {
 
             dialogueManager?.StartDialogue();
+            customEvent.Invoke();
 
-            Debug.Log("Загрузка сцены: " + sceneToLoad);
-          
-            SceneManager.LoadScene(sceneToLoad); 
-            
         }
         else
         {
-            dialogueManager?.StartDialogue(); 
+            dialogueManager?.StartDialogue();
         }
+
+        
     }
 
     private void OnTriggerEnter(Collider other)
