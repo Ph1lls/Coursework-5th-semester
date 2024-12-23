@@ -16,7 +16,7 @@ public class Inventory : MonoBehaviour
         }
         else
         {
-            Instance = this; 
+            Instance = this;
         }
     }
 
@@ -26,7 +26,7 @@ public class Inventory : MonoBehaviour
         {
             if (prefabs[i] != null)
             {
-                PlayerPrefs.SetString("Item" + i, prefabs[i].name);  
+                PlayerPrefs.SetString("Item" + i, prefabs[i].name);
             }
             else
             {
@@ -42,8 +42,8 @@ public class Inventory : MonoBehaviour
             string itemName = PlayerPrefs.GetString("Item" + i);
             if (!string.IsNullOrEmpty(itemName))
             {
-                GameObject item = Resources.Load<GameObject>("Items/" + itemName); 
-                prefabs[i] = item;  
+                GameObject item = Resources.Load<GameObject>("Items/" + itemName);
+                prefabs[i] = item;
             }
             else
             {

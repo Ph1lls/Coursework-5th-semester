@@ -2,15 +2,13 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Events;
-using Unity.VisualScripting;
 
 public class ConditionChecker : MonoBehaviour
 {
     [SerializeField] private Inventory inventory;
     [SerializeField] private DialogueManager dialogueManager;
-    [SerializeField] private GameObject[] requiredItems; 
+    [SerializeField] private SceneCondition[] sceneConditions;
     [SerializeField] private Button checkConditionsButton;
-    [SerializeField] public UnityEvent customEvent;
 
     private void Start()
     {
@@ -18,16 +16,28 @@ public class ConditionChecker : MonoBehaviour
 
         if (checkConditionsButton != null)
         {
-            checkConditionsButton.gameObject.SetActive(false); 
-            checkConditionsButton.onClick.AddListener(CheckConditions); 
+            checkConditionsButton.gameObject.SetActive(false);
+            checkConditionsButton.onClick.AddListener(CheckConditions);
         }
     }
 
-
     public void CheckConditions()
     {
-        bool allItemsFound = true;
+        foreach (var condition in sceneConditions)
+        {
+            if (AreItemsInInventory(condition.requiredItems))
+            {
+                dialogueManager?.StartDialogue();
+                condition.customEvent.Invoke();
+                return;
+            }
+        }
 
+        dialogueManager?.StartDialogue();
+    }
+
+    private bool AreItemsInInventory(GameObject[] requiredItems)
+    {
         foreach (GameObject requiredItem in requiredItems)
         {
             bool itemFound = false;
@@ -40,58 +50,52 @@ public class ConditionChecker : MonoBehaviour
 
                     if (itemName.EndsWith("(Clone)"))
                     {
-                        itemName = itemName.Substring(0, itemName.Length - 7); 
+                        itemName = itemName.Substring(0, itemName.Length - 7);
                     }
 
                     if (itemName == requiredItem.name)
                     {
                         itemFound = true;
-                        break;  
+                        break;
                     }
                 }
             }
 
             if (!itemFound)
             {
-                allItemsFound = false;
-                break;
+                return false;
             }
         }
 
-        if (allItemsFound)
-        {
-
-            dialogueManager?.StartDialogue();
-            customEvent.Invoke();
-
-        }
-        else
-        {
-            dialogueManager?.StartDialogue();
-        }
-
-        
+        return true;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))  
+        if (other.CompareTag("Player"))
         {
             if (checkConditionsButton != null)
             {
-                checkConditionsButton.gameObject.SetActive(true);  
+                checkConditionsButton.gameObject.SetActive(true);
             }
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))  
+        if (other.CompareTag("Player"))
         {
             if (checkConditionsButton != null)
             {
-                checkConditionsButton.gameObject.SetActive(false); 
+                checkConditionsButton.gameObject.SetActive(false);
             }
         }
     }
+}
+
+[System.Serializable]
+public class SceneCondition
+{
+    public GameObject[] requiredItems;
+    public UnityEvent customEvent;
 }

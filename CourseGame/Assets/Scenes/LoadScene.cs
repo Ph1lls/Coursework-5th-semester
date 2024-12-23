@@ -15,6 +15,7 @@ public class LoadScene : MonoBehaviour
     {
         LoadingScreen.SetActive(true);
 
+
         StartCoroutine(LoadAsync());
     }
 

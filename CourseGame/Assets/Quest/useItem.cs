@@ -112,17 +112,12 @@ public class UseItem : MonoBehaviour
     {
         if (inventory.prefabs[selectedSlot] != null)
         {
-            Destroy(inventory.prefabs[selectedSlot]);
-            inventory.prefabs[selectedSlot] = null; 
+            inventory.prefabs[selectedSlot].SetActive(false);
         }
     }
 
     private void ReplaceItemInSlot(int slotIndex, GameObject newItem)
     {
-        if (inventory.prefabs[slotIndex] != null)
-        {
-            inventory.prefabs[slotIndex].SetActive(false);
-        }
 
         GameObject newObject = Instantiate(newItem, inventory.slots[slotIndex].transform);
         inventory.prefabs[slotIndex] = newObject;

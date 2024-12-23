@@ -60,6 +60,7 @@ public class PickUp : MonoBehaviour
             {
                 itemInSlot = Instantiate(slotButton, inventory.slots[i].transform);
                 inventory.prefabs[i] = itemInSlot;
+                inventory.prefabs[i].SetActive(true);
                 handButton.interactable = false;
                 break;
             }

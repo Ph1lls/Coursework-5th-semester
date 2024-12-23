@@ -17,4 +17,25 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/EndScene.unity
     guid: 624becb516b1078468bb9f5a1656aa5e
+  - enabled: 1
+    path: Assets/Scenes/Univercity.unity
+    guid: a1dffc1d04b199d49a86c52ac6a1229c
+  - enabled: 1
+    path: Assets/Scenes/CafeStreet.unity
+    guid: c7cc6db9d5efafc49bbef285ee970f83
+  - enabled: 1
+    path: Assets/Scenes/2CafeStreet.unity
+    guid: 511087623bf9cf84aa863eb7fdeed39b
+  - enabled: 1
+    path: Assets/Scenes/3CafeStreet.unity
+    guid: a996899782c2c0646bfba28a1aac7356
+  - enabled: 1
+    path: Assets/Scenes/4CafeStreet.unity
+    guid: c470ea501571e1e4791abfbce5166c27
+  - enabled: 1
+    path: Assets/Scenes/2Cafe.unity
+    guid: 4406a45cccfb8484d86ec7da021a45fb
+  - enabled: 1
+    path: Assets/Scenes/Cafe.unity
+    guid: 05e80559e103ef44e92285d297378eb5
   m_configObjects: {}
